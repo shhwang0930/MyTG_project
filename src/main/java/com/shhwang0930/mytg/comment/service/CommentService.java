@@ -1,59 +1,62 @@
-package com.shhwang0930.mytg.board.service;
+package com.shhwang0930.mytg.comment.service;
 
-import com.shhwang0930.mytg.board.model.BoardDTO;
+
 import com.shhwang0930.mytg.board.model.BoardEntity;
 import com.shhwang0930.mytg.board.repository.BoardRepository;
+import com.shhwang0930.mytg.comment.model.CommentDTO;
+import com.shhwang0930.mytg.comment.model.CommentEntity;
+import com.shhwang0930.mytg.comment.repository.CommentRepository;
 import com.shhwang0930.mytg.user.model.UserEntity;
 import com.shhwang0930.mytg.user.repository.UserRepository;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import javax.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class BoardService {
-    private final BoardRepository boardRepository;
+public class CommentService {
+    private final CommentRepository commentRepository;
     private final UserRepository userRepository;
+    private final BoardRepository boardRepository;
 
-    public List<BoardDTO> readBoardList(){
-        List<BoardEntity> boardList = boardRepository.findAll();
-        return BoardDTO.fromEntityList(boardList);
+    public List<CommentDTO> readCommentList(Long idx){
+        List<CommentEntity> commentList = commentRepository.findAllByBoardIdx(idx);
+        //board idx isExist
+        return CommentDTO.fromEntityList(commentList);
     }
 
-    public BoardDTO readBoard(long idx){
+    public CommentDTO readComment(Long commentIdx){
         // 1. BoardEntity를 조회합니다.
-        Optional<BoardEntity> optionalBoardEntity = boardRepository.findById(idx);
-
+        Optional<CommentEntity> optionalCommentEntity = commentRepository.findById(commentIdx);
         // 2. 조회된 BoardEntity를 DTO로 변환합니다.
-        if (optionalBoardEntity.isPresent()) {
-            BoardEntity boardEntity = optionalBoardEntity.get();
-            return BoardDTO.fromEntity(boardEntity);
+        if (optionalCommentEntity.isPresent()) {
+            CommentEntity commentEntity = optionalCommentEntity.get();
+            return CommentDTO.fromEntity(commentEntity);
         } else {
             // BoardEntity가 존재하지 않는 경우 적절히 처리합니다.
             return null;
         }
     }
 
-    @Transactional
-    public void createBoard(BoardDTO boardDTO){
-
+    public void createComment(CommentDTO commentDTO, Long idx){
         // 현재 인증된 사용자 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
         UserEntity user = userRepository.findByUsername(username);
+        BoardEntity board = boardRepository.findAllByIdx(idx);
 
-        BoardEntity board = boardDTO.toEntity(user);
-        boardRepository.save(board);
+        CommentEntity comment = commentDTO.toEntity(board, user);
+
+        commentRepository.save(comment);
     }
 
-    @Transactional
-    public void updateBoard(Long idx, BoardDTO boardDTO){
+    public void updateComment(CommentDTO commentDTO, Long commentIdx, Long idx){
         // 현재 인증된 사용자 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -64,36 +67,39 @@ public class BoardService {
             throw new RuntimeException("User not found");
         }
 
+        BoardEntity board = boardRepository.findAllByIdx(idx);
+        System.out.printf("board idx : %d", idx);
+        System.out.printf("desc : %s", commentDTO.getDesc());
+
+
         // 기존 게시물 조회
-        Optional<BoardEntity> optionalBoard = boardRepository.findById(idx);
-        if (optionalBoard.isEmpty()) {
+        Optional<CommentEntity> optionalComment = commentRepository.findById(commentIdx);
+        if (optionalComment.isEmpty()) {
             throw new RuntimeException("Board not found");
         }
 
         // 기존 게시물 가져오기
-        BoardEntity existingBoard = optionalBoard.get();
+        CommentEntity existingComment = optionalComment.get();
 
         // 게시물의 작성자와 현재 인증된 사용자가 일치하는지 확인
-        if (!existingBoard.getUser().equals(user)) {
+        if (!existingComment.getUser().equals(user)) {
             throw new RuntimeException("Unauthorized to update this board");
         }
 
         // 새로운 상태를 가진 BoardEntity를 생성
-        BoardEntity updatedBoard = BoardEntity.builder()
-                .idx(existingBoard.getIdx()) // 기존 ID 유지
-                .title(boardDTO.getTitle())
-                .content(boardDTO.getContent())
-                .category(boardDTO.getCategory())
+        CommentEntity updatedComment = CommentEntity.builder()
+                .commentIdx(existingComment.getCommentIdx()) // 기존 ID 유지
+                .commentDesc(commentDTO.getDesc())
                 .user(user) // 현재 사용자로 설정
+                .board(board)
                 .build();
 
+
         // 새로운 엔티티로 저장
-        boardRepository.save(updatedBoard);
+        commentRepository.save(updatedComment);
     }
 
-    @Transactional
-    public void deleteBoard(long idx){
-        boardRepository.deleteByIdx(idx);
+    public void deleteComment(Long commentIdx){
+        commentRepository.deleteByCommentIdx(commentIdx);
     }
-
 }

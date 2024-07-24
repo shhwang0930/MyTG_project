@@ -1,7 +1,6 @@
 package com.shhwang0930.mytg.board.controller;
 
 import com.shhwang0930.mytg.board.model.BoardDTO;
-import com.shhwang0930.mytg.board.model.BoardEntity;
 import com.shhwang0930.mytg.board.service.BoardService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -16,16 +15,12 @@ public class BoardController {
 
     @GetMapping("/list")
     public List<BoardDTO> readBoardList(){
-        List<BoardEntity> boardList = boardService.readBoardList();
-        List<BoardDTO> boardDTOList = boardService.toDTO(boardList);
-        return boardDTOList;
+        return boardService.readBoardList();
     }
 
     @GetMapping("/{idx}")
     public BoardDTO readBoard(@PathVariable Long idx){
-        BoardEntity board = boardService.readBoard(idx);
-        BoardDTO boardDTO = boardService.toDTO(board);
-        return boardDTO;
+        return boardService.readBoard(idx);
     }
 
     @PostMapping()
