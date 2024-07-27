@@ -2,6 +2,7 @@ package com.shhwang0930.mytg.board.service;
 
 import com.shhwang0930.mytg.board.model.BoardDTO;
 import com.shhwang0930.mytg.board.model.BoardEntity;
+import com.shhwang0930.mytg.board.model.Category;
 import com.shhwang0930.mytg.board.repository.BoardRepository;
 import com.shhwang0930.mytg.user.model.UserEntity;
 import com.shhwang0930.mytg.user.repository.UserRepository;
@@ -83,7 +84,7 @@ public class BoardService {
                 .idx(existingBoard.getIdx()) // 기존 ID 유지
                 .title(boardDTO.getTitle())
                 .content(boardDTO.getContent())
-                .category(boardDTO.getCategory())
+                .category(Category.valueOf(boardDTO.getCategory()))
                 .user(user) // 현재 사용자로 설정
                 .build();
 
@@ -94,6 +95,10 @@ public class BoardService {
     @Transactional
     public void deleteBoard(long idx){
         boardRepository.deleteByIdx(idx);
+    }
+
+    public boolean boardIsExist(long idx){
+        return boardRepository.existsByIdx(idx);
     }
 
 }

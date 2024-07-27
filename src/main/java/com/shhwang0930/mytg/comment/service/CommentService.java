@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import javax.xml.stream.events.Comment;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,9 +69,6 @@ public class CommentService {
         }
 
         BoardEntity board = boardRepository.findAllByIdx(idx);
-        System.out.printf("board idx : %d", idx);
-        System.out.printf("desc : %s", commentDTO.getDesc());
-
 
         // 기존 게시물 조회
         Optional<CommentEntity> optionalComment = commentRepository.findById(commentIdx);
@@ -101,5 +99,18 @@ public class CommentService {
 
     public void deleteComment(Long commentIdx){
         commentRepository.deleteByCommentIdx(commentIdx);
+    }
+
+    public boolean existComment(Long commentIdx){
+        return commentRepository.existsByCommentIdx(commentIdx);
+    }
+
+    public boolean matchBoardComment(Long idx, Long commentIdx){
+        CommentEntity comment = commentRepository.findAllByCommentIdx(commentIdx);
+        Long boardIdx = comment.getBoard().getIdx();
+        if(idx == boardIdx){
+            return true;
+        }
+        return false;
     }
 }

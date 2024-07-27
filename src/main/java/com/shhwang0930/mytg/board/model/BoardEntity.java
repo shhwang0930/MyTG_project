@@ -23,8 +23,9 @@ public class BoardEntity {
     @Column
     private String content;
 
+    @Enumerated(EnumType.STRING)
     @Column
-    private String category;
+    private Category category;
 
     @ManyToOne
     @JoinColumn(name = "id")
@@ -34,7 +35,7 @@ public class BoardEntity {
     private List<CommentEntity> commentList;
 
     @Builder
-    public BoardEntity(Long idx, String title, String content, String category, UserEntity user) {
+    public BoardEntity(Long idx, String title, String content, Category category, UserEntity user) {
         this.idx = idx;
         this.title = title;
         this.content = content;

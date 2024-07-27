@@ -19,7 +19,7 @@ public class BoardDTO {
         return BoardDTO.builder()
                 .title(board.getTitle())
                 .content(board.getContent())
-                .category(board.getCategory())
+                .category(board.getCategory().name()) // ENUM to String
                 .user(board.getUser().getUsername())
                 .build();
     }
@@ -34,7 +34,7 @@ public class BoardDTO {
         return BoardEntity.builder()
                 .title(this.title)
                 .content(this.content)
-                .category(this.category)
+                .category(Category.valueOf(this.category))
                 .user(userEntity)
                 .build();
     }

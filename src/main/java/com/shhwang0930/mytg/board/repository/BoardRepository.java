@@ -9,4 +9,6 @@ public interface BoardRepository extends JpaRepository<BoardEntity, Long> {
     List<BoardEntity> findAll();
     BoardEntity findAllByIdx(Long idx);
     void deleteByIdx(Long idx);
+
+    boolean existsByIdx(Long idx);
 }

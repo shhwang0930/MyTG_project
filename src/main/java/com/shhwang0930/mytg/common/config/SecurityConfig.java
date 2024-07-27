@@ -1,4 +1,4 @@
-package com.shhwang0930.mytg.config;
+package com.shhwang0930.mytg.common.config;
 
 import com.shhwang0930.mytg.jwt.filter.CustomLogoutFilter;
 import com.shhwang0930.mytg.jwt.filter.JWTFilter;

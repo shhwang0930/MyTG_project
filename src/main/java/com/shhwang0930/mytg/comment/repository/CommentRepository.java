@@ -9,4 +9,5 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
     List<CommentEntity> findAllByBoardIdx(Long idx);
     CommentEntity findAllByCommentIdx(Long idx);
     void deleteByCommentIdx(Long idx);
+    boolean existsByCommentIdx(Long commentIdx);
 }

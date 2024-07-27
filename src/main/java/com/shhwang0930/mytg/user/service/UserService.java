@@ -13,15 +13,9 @@ public class UserService {
     private final UserRepository userRepository;
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    public void joinUser(JoinDTO joinDTO){
+    public String joinUser(JoinDTO joinDTO){
         String username = joinDTO.getUsername();
         String password = joinDTO.getPassword();
-
-        Boolean isExist = userRepository.existsByUsername(username);
-
-        if(isExist){
-            return ;
-        }
 
         UserEntity data = new UserEntity();
 
@@ -30,5 +24,11 @@ public class UserService {
         data.setRole("ROLE_ADMIN");
 
         userRepository.save(data);
+
+        return "success";
+    }
+
+    public boolean existUsername(String username){
+        return userRepository.existsByUsername(username);
     }
 }

@@ -1,8 +1,13 @@
 package com.shhwang0930.mytg.comment.controller;
 
+import com.shhwang0930.mytg.board.service.BoardService;
 import com.shhwang0930.mytg.comment.model.CommentDTO;
 import com.shhwang0930.mytg.comment.service.CommentService;
+import com.shhwang0930.mytg.common.model.ResponseMessage;
+import com.shhwang0930.mytg.common.model.StatusCode;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,33 +18,86 @@ import java.util.List;
 public class CommentController {
 
     private final CommentService commentService;
+    private final BoardService boardService;
 
     @GetMapping("/list/{idx}")
-    public List<CommentDTO> readCommentList(@PathVariable Long idx){
-        return commentService.readCommentList(idx);
+    public ResponseEntity<ResponseMessage> readCommentList(@PathVariable Long idx){
+        if(!boardService.boardIsExist(idx)){
+            StatusCode statusCode = StatusCode.BOARD_NOT_FOUND;
+            ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+        }
+        StatusCode statusCode = StatusCode.SUCCESS;
+        ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
+        responseMessage.addData("board", commentService.readCommentList(idx));
+        return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
     @GetMapping("/{idx}/{commentIdx}")
-    public CommentDTO readComment(@PathVariable Long idx, @PathVariable Long commentIdx){
-        //board idx도 받아 예외처리 필요
-        return commentService.readComment(commentIdx);
+    public ResponseEntity<ResponseMessage> readComment(@PathVariable Long idx, @PathVariable Long commentIdx){
+        if(!commentService.matchBoardComment(idx, commentIdx)){
+            StatusCode statusCode = StatusCode.BOARD_COMMENT_NOT_MATCH;
+            ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+        }
+        if(!commentService.existComment(commentIdx)){
+            StatusCode statusCode = StatusCode.COMMENT_NOT_FOUND;
+            ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+        }
+        StatusCode statusCode = StatusCode.SUCCESS;
+        ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
+        responseMessage.addData("board", commentService.readComment(commentIdx));
+        return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
     @PostMapping("/{idx}")
-    public void createComment(@PathVariable Long idx, @RequestBody CommentDTO commentDTO){
+    public ResponseEntity<ResponseMessage> createComment(@PathVariable Long idx, @RequestBody CommentDTO commentDTO){
+        if(!boardService.boardIsExist(idx)){
+            StatusCode statusCode = StatusCode.BOARD_NOT_FOUND;
+            ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+        }
+        StatusCode statusCode = StatusCode.SUCCESS;
+        ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
         commentService.createComment(commentDTO, idx);
+        return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
     @PutMapping("/{idx}/{commentIdx}")
-    public void updateComment( @PathVariable Long idx, @PathVariable Long commentIdx,@RequestBody CommentDTO commentDTO){
-        // 추가 로그
-        System.out.println("commentDTO: " + commentDTO);
-        System.out.println("commentDTO.getDesc(): " + commentDTO.getDesc());
+    public ResponseEntity<ResponseMessage> updateComment( @PathVariable Long idx, @PathVariable Long commentIdx, @RequestBody CommentDTO commentDTO){
+        if(!commentService.matchBoardComment(idx, commentIdx)){
+            StatusCode statusCode = StatusCode.BOARD_COMMENT_NOT_MATCH;
+            ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+        }
+        if(!commentService.existComment(commentIdx)){
+            StatusCode statusCode = StatusCode.COMMENT_NOT_FOUND;
+            ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+        }
+        StatusCode statusCode = StatusCode.SUCCESS;
+        ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
         commentService.updateComment(commentDTO, commentIdx, idx);
+        return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
     @DeleteMapping("/{idx}/{commentIdx}")
-    public void deleteComment(@PathVariable Long commentIdx){
+    public ResponseEntity<ResponseMessage> deleteComment(@PathVariable Long commentIdx, @PathVariable Long idx) {
+        if (!commentService.matchBoardComment(idx, commentIdx)) {
+            StatusCode statusCode = StatusCode.BOARD_COMMENT_NOT_MATCH;
+            ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+        }
+        if (!commentService.existComment(commentIdx)) {
+            StatusCode statusCode = StatusCode.COMMENT_NOT_FOUND;
+            ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+        }
+
+        StatusCode statusCode = StatusCode.SUCCESS;
+        ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
         commentService.deleteComment(commentIdx);
+        return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 }
