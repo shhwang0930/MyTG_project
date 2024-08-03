@@ -101,4 +101,8 @@ public class BoardService {
         return boardRepository.existsByIdx(idx);
     }
 
+    public List<BoardDTO> searchBoard(String keyword) {
+        return boardRepository.searchByTitleOrContent(keyword);
+    }
+
 }

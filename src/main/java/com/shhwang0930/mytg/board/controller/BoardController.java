@@ -1,6 +1,7 @@
 package com.shhwang0930.mytg.board.controller;
 
 import com.shhwang0930.mytg.board.model.BoardDTO;
+import com.shhwang0930.mytg.board.model.BoardEntity;
 import com.shhwang0930.mytg.board.service.BoardService;
 import com.shhwang0930.mytg.common.model.ResponseMessage;
 import com.shhwang0930.mytg.common.model.StatusCode;
@@ -71,5 +72,10 @@ public class BoardController {
         ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
         boardService.deleteBoard(idx);
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+    }
+
+    @GetMapping("/search")
+    public List<BoardDTO> searchBoard(@RequestParam String keyword){
+        return boardService.searchBoard(keyword);
     }
 }

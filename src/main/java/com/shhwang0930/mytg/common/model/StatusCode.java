@@ -18,7 +18,12 @@ public enum StatusCode {
 
     //유저 관련 에러코드
     USER_MATCH_FAILED(4004,"유저 정보가 일치하지 않습니다."),
-    RESOURCE_ALREADY_EXISTS(4005,"이미 존재하는 정보입니다.");
+    RESOURCE_ALREADY_EXISTS(4005,"이미 존재하는 정보입니다."),
+    LOGIN_FAILED(4006,"로그인이 실패하였습니다."),
+
+    //JWT 관련 에러코드
+    TOKEN_NOT_FOUND(4007,"JWT 토큰이 존재하지 않습니다."),
+    INVAILD_TOKEN(4008,"올바르지 않은 토큰입니다.");
 
     private final Integer code;
     private final String message;

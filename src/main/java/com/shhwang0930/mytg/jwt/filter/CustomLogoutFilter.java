@@ -1,8 +1,12 @@
 package com.shhwang0930.mytg.jwt.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.shhwang0930.mytg.common.model.ResponseMessage;
+import com.shhwang0930.mytg.common.model.StatusCode;
 import com.shhwang0930.mytg.jwt.JWTUtil;
 import com.shhwang0930.mytg.jwt.service.JwtService;
 import io.jsonwebtoken.ExpiredJwtException;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.filter.GenericFilterBean;
 
 import javax.servlet.FilterChain;
@@ -13,6 +17,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import static com.shhwang0930.mytg.jwt.constants.AuthConst.REFRESH_TOKEN_TYPE;
 
@@ -44,26 +49,45 @@ public class CustomLogoutFilter extends GenericFilterBean {
         }
         String requestMethod = request.getMethod();
         if (!requestMethod.equals("POST")) {
-
             filterChain.doFilter(request, response);
             return;
         }
 
+        ObjectMapper objectMapper = new ObjectMapper();
+
         //get refresh token
         String refresh = null;
         Cookie[] cookies = request.getCookies();
+        if(cookies == null){
+            StatusCode statusCode = StatusCode.TOKEN_NOT_FOUND;
+            ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(),null);
+
+            //JSON 형태로 반환
+            String body = objectMapper.writeValueAsString(responseMessage);
+            PrintWriter writer = response.getWriter();
+            writer.print(body);
+
+            response.setStatus(HttpStatus.OK.value());
+            return;
+        }
         for (Cookie cookie : cookies) {
 
             if (cookie.getName().equals(REFRESH_TOKEN_TYPE)) {
-
                 refresh = cookie.getValue();
             }
         }
 
         //refresh null check
         if (refresh == null) {
+            StatusCode statusCode = StatusCode.TOKEN_NOT_FOUND;
+            ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(),null);
 
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            //JSON 형태로 반환
+            String body = objectMapper.writeValueAsString(responseMessage);
+            PrintWriter writer = response.getWriter();
+            writer.print(body);
+
+            response.setStatus(HttpStatus.OK.value());
             return;
         }
 
@@ -71,9 +95,15 @@ public class CustomLogoutFilter extends GenericFilterBean {
         try {
             jwtUtil.isExpired(refresh);
         } catch (ExpiredJwtException e) {
+            StatusCode statusCode = StatusCode.TOKEN_NOT_FOUND;
+            ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(),null);
 
-            //response status code
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            //JSON 형태로 반환
+            String body = objectMapper.writeValueAsString(responseMessage);
+            PrintWriter writer = response.getWriter();
+            writer.print(body);
+
+            response.setStatus(HttpStatus.OK.value());
             return;
         }
 
@@ -81,17 +111,30 @@ public class CustomLogoutFilter extends GenericFilterBean {
         String category = jwtUtil.getCategory(refresh);
         if (!category.equals(REFRESH_TOKEN_TYPE)) {
 
-            //response status code
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            StatusCode statusCode = StatusCode.INVAILD_TOKEN;
+            ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(),null);
+
+            //JSON 형태로 반환
+            String body = objectMapper.writeValueAsString(responseMessage);
+            PrintWriter writer = response.getWriter();
+            writer.print(body);
+
+            response.setStatus(HttpStatus.OK.value());
             return;
         }
 
         //DB에 저장되어 있는지 확인
         Boolean isExist = jwtService.isExistRefreshToken(refresh);
         if (!isExist) {
+            StatusCode statusCode = StatusCode.TOKEN_NOT_FOUND;
+            ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(),null);
 
-            //response status code
-            response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
+            //JSON 형태로 반환
+            String body = objectMapper.writeValueAsString(responseMessage);
+            PrintWriter writer = response.getWriter();
+            writer.print(body);
+
+            response.setStatus(HttpStatus.OK.value());
             return;
         }
 
@@ -105,6 +148,15 @@ public class CustomLogoutFilter extends GenericFilterBean {
         cookie.setPath("/");
 
         response.addCookie(cookie);
-        response.setStatus(HttpServletResponse.SC_OK);
+
+        StatusCode statusCode = StatusCode.SUCCESS;
+        ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(),statusCode.getMessage(),null);
+
+        //JSON 형태로 반환
+        String body = objectMapper.writeValueAsString(responseMessage);
+        PrintWriter writer = response.getWriter();
+        writer.print(body);
+
+        response.setStatus(HttpStatus.OK.value());
     }
 }
