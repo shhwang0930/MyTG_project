@@ -51,7 +51,7 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
-    @PostMapping("/{idx}")
+    @PostMapping("/me/{idx}")
     public ResponseEntity<ResponseMessage> createComment(@PathVariable Long idx, @RequestBody CommentDTO commentDTO){
         if(!boardService.boardIsExist(idx)){
             StatusCode statusCode = StatusCode.BOARD_NOT_FOUND;
@@ -64,7 +64,7 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
-    @PutMapping("/{idx}/{commentIdx}")
+    @PutMapping("/me/{idx}/{commentIdx}")
     public ResponseEntity<ResponseMessage> updateComment( @PathVariable Long idx, @PathVariable Long commentIdx, @RequestBody CommentDTO commentDTO){
         if(!commentService.matchBoardComment(idx, commentIdx)){
             StatusCode statusCode = StatusCode.BOARD_COMMENT_NOT_MATCH;
@@ -82,7 +82,7 @@ public class CommentController {
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
-    @DeleteMapping("/{idx}/{commentIdx}")
+    @DeleteMapping("/me/{idx}/{commentIdx}")
     public ResponseEntity<ResponseMessage> deleteComment(@PathVariable Long commentIdx, @PathVariable Long idx) {
         if (!commentService.matchBoardComment(idx, commentIdx)) {
             StatusCode statusCode = StatusCode.BOARD_COMMENT_NOT_MATCH;

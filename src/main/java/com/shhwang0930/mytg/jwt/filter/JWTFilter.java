@@ -1,8 +1,8 @@
 package com.shhwang0930.mytg.jwt.filter;
 
 import com.shhwang0930.mytg.jwt.JWTUtil;
-import com.shhwang0930.mytg.user.model.CustomUserDetails;
-import com.shhwang0930.mytg.user.model.UserEntity;
+import com.shhwang0930.mytg.user.model.entity.CustomUserDetails;
+import com.shhwang0930.mytg.user.model.entity.UserEntity;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;

@@ -6,7 +6,7 @@ import com.shhwang0930.mytg.board.repository.BoardRepository;
 import com.shhwang0930.mytg.comment.model.CommentDTO;
 import com.shhwang0930.mytg.comment.model.CommentEntity;
 import com.shhwang0930.mytg.comment.repository.CommentRepository;
-import com.shhwang0930.mytg.user.model.UserEntity;
+import com.shhwang0930.mytg.user.model.entity.UserEntity;
 import com.shhwang0930.mytg.user.repository.UserRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -14,7 +14,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import javax.xml.stream.events.Comment;
 import java.util.List;
 import java.util.Optional;
 

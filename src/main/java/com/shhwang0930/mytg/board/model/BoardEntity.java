@@ -1,7 +1,7 @@
 package com.shhwang0930.mytg.board.model;
 
 import com.shhwang0930.mytg.comment.model.CommentEntity;
-import com.shhwang0930.mytg.user.model.UserEntity;
+import com.shhwang0930.mytg.user.model.entity.UserEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

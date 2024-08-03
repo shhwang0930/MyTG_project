@@ -40,7 +40,7 @@ public class BoardController {
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
-    @PostMapping()
+    @PostMapping("/me")
     public ResponseEntity<ResponseMessage> createBoard(@RequestBody BoardDTO boardDTO){
         StatusCode statusCode = StatusCode.SUCCESS;
         ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
@@ -48,7 +48,7 @@ public class BoardController {
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
-    @PutMapping("/{idx}")
+    @PutMapping("/me/{idx}")
     public ResponseEntity<ResponseMessage> updateBoard(@PathVariable Long idx, @RequestBody BoardDTO boardDTO){
         if(!boardService.boardIsExist(idx)){
             StatusCode statusCode = StatusCode.BOARD_NOT_FOUND;
@@ -61,7 +61,7 @@ public class BoardController {
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
-    @DeleteMapping("/{idx}")
+    @DeleteMapping("/me/{idx}")
     public ResponseEntity<ResponseMessage> deleteBoard(@PathVariable Long idx){
         if(!boardService.boardIsExist(idx)){
             StatusCode statusCode = StatusCode.BOARD_NOT_FOUND;

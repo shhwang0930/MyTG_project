@@ -4,7 +4,7 @@ import com.shhwang0930.mytg.board.model.BoardDTO;
 import com.shhwang0930.mytg.board.model.BoardEntity;
 import com.shhwang0930.mytg.board.model.Category;
 import com.shhwang0930.mytg.board.repository.BoardRepository;
-import com.shhwang0930.mytg.user.model.UserEntity;
+import com.shhwang0930.mytg.user.model.entity.UserEntity;
 import com.shhwang0930.mytg.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;

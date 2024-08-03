@@ -16,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutFilter;
+import org.springframework.web.filter.CharacterEncodingFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -66,11 +67,16 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .antMatchers("/login", "/", "/join").permitAll()
-                        .antMatchers("/admin","/board/**").hasRole("ADMIN")
-                        .antMatchers("/reissue").permitAll()
+                        .antMatchers("/login", "/").permitAll()
+                        .antMatchers("/admin","/board/me/**","/comment/me/**","/user/me/**").hasRole("ADMIN")
+                        .antMatchers("/reissue","/board/**","/comment/**","/user/**").permitAll()
                         .anyRequest().authenticated());
         //필터 추가 LoginFilter()는 인자를 받음 (AuthenticationManager() 메소드에 authenticationConfiguration 객체를 넣어야 함) 따라서 등록 필요
+        CharacterEncodingFilter characterEncodingFilter = new CharacterEncodingFilter();
+        characterEncodingFilter.setEncoding("UTF-8");
+        characterEncodingFilter.setForceEncoding(true);
+        http
+                .addFilterBefore(characterEncodingFilter, LogoutFilter.class);
         http
                 .addFilterAt(new LoginFilter(authenticationManager(authenticationConfiguration), jwtUtil, jwtService), UsernamePasswordAuthenticationFilter.class);
         http

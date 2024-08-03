@@ -1,7 +1,7 @@
 package com.shhwang0930.mytg.jwt.service;
 
-import com.shhwang0930.mytg.user.model.CustomUserDetails;
-import com.shhwang0930.mytg.user.model.UserEntity;
+import com.shhwang0930.mytg.user.model.entity.CustomUserDetails;
+import com.shhwang0930.mytg.user.model.entity.UserEntity;
 import com.shhwang0930.mytg.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
