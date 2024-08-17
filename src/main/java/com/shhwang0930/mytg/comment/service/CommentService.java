@@ -112,4 +112,11 @@ public class CommentService {
         }
         return false;
     }
+
+    public boolean matchUser(String username, Long commentIdx){
+        if(userRepository.findByUsername(username).getId()==commentRepository.findAllByCommentIdx(commentIdx).getUser().getId()){
+            return true;
+        }
+        return false;
+    }
 }

@@ -105,4 +105,10 @@ public class BoardService {
         return boardRepository.searchByTitleOrContent(keyword);
     }
 
+    public boolean matchUser(String username, Long idx){
+        if(userRepository.findByUsername(username).getId()==boardRepository.findAllByIdx(idx).getUser().getId()){
+            return true;
+        }
+        return false;
+    }
 }

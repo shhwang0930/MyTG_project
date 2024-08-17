@@ -8,6 +8,8 @@ import com.shhwang0930.mytg.common.model.StatusCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -27,6 +29,7 @@ public class CommentController {
             ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
             return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
         }
+
         StatusCode statusCode = StatusCode.SUCCESS;
         ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
         responseMessage.addData("board", commentService.readCommentList(idx));
@@ -40,11 +43,13 @@ public class CommentController {
             ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
             return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
         }
+
         if(!commentService.existComment(commentIdx)){
             StatusCode statusCode = StatusCode.COMMENT_NOT_FOUND;
             ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
             return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
         }
+
         StatusCode statusCode = StatusCode.SUCCESS;
         ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
         responseMessage.addData("board", commentService.readComment(commentIdx));
@@ -58,6 +63,7 @@ public class CommentController {
             ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
             return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
         }
+
         StatusCode statusCode = StatusCode.SUCCESS;
         ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
         commentService.createComment(commentDTO, idx);
@@ -66,16 +72,27 @@ public class CommentController {
 
     @PutMapping("/me/{idx}/{commentIdx}")
     public ResponseEntity<ResponseMessage> updateComment( @PathVariable Long idx, @PathVariable Long commentIdx, @RequestBody CommentDTO commentDTO){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        if(!commentService.matchUser(username, commentIdx)){
+            StatusCode statusCode = StatusCode.USER_MATCH_FAILED;
+            ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+        }
+
         if(!commentService.matchBoardComment(idx, commentIdx)){
             StatusCode statusCode = StatusCode.BOARD_COMMENT_NOT_MATCH;
             ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
             return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
         }
+
         if(!commentService.existComment(commentIdx)){
             StatusCode statusCode = StatusCode.COMMENT_NOT_FOUND;
             ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
             return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
         }
+
         StatusCode statusCode = StatusCode.SUCCESS;
         ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
         commentService.updateComment(commentDTO, commentIdx, idx);
@@ -84,11 +101,21 @@ public class CommentController {
 
     @DeleteMapping("/me/{idx}/{commentIdx}")
     public ResponseEntity<ResponseMessage> deleteComment(@PathVariable Long commentIdx, @PathVariable Long idx) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        if(!commentService.matchUser(username, commentIdx)){
+            StatusCode statusCode = StatusCode.USER_MATCH_FAILED;
+            ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
+            return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
+        }
+
         if (!commentService.matchBoardComment(idx, commentIdx)) {
             StatusCode statusCode = StatusCode.BOARD_COMMENT_NOT_MATCH;
             ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
             return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
         }
+
         if (!commentService.existComment(commentIdx)) {
             StatusCode statusCode = StatusCode.COMMENT_NOT_FOUND;
             ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
