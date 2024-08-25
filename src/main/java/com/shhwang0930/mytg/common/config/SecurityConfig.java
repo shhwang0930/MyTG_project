@@ -67,7 +67,7 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .antMatchers("/login", "/").permitAll()
+                        .antMatchers("/login", "/", "/test").permitAll()
                         .antMatchers("/admin","/board/me/**","/comment/me/**","/user/me/**").hasRole("ADMIN")
                         .antMatchers("/reissue","/board/**","/comment/**","/user/**").permitAll()
                         .anyRequest().authenticated());

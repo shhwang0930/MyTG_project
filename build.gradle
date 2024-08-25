@@ -32,6 +32,8 @@ repositories {
 	mavenCentral()
 }
 
+
+
 dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-security'
@@ -55,6 +57,10 @@ dependencies {
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
 	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 	implementation "com.querydsl:querydsl-core:${queryDslVersion}"
+
+	// https://mvnrepository.com/artifact/org.jdom/jdom2
+	//jdom
+	implementation group: 'org.jdom', name: 'jdom2', version: '2.0.6'
 }
 
 tasks.named('test') {
