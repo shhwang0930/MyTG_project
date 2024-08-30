@@ -1,5 +1,7 @@
-package com.shhwang0930.mytg.board.model;
+package com.shhwang0930.mytg.board.model.dto;
 
+import com.shhwang0930.mytg.board.model.entity.BoardEntity;
+import com.shhwang0930.mytg.board.model.entity.Category;
 import com.shhwang0930.mytg.user.model.entity.UserEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,5 +1,6 @@
-package com.shhwang0930.mytg.exam.model;
+package com.shhwang0930.mytg.exam.model.dto;
 
+import com.shhwang0930.mytg.exam.model.entity.ExamEntity;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

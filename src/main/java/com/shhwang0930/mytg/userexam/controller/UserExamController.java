@@ -1,10 +1,9 @@
-package com.shhwang0930.mytg.board.controller;
+package com.shhwang0930.mytg.userexam.controller;
 
-import com.shhwang0930.mytg.board.model.dto.BoardDTO;
-import com.shhwang0930.mytg.board.service.BoardService;
 import com.shhwang0930.mytg.common.model.ResponseMessage;
 import com.shhwang0930.mytg.common.model.StatusCode;
-
+import com.shhwang0930.mytg.userexam.model.UserExamDTO;
+import com.shhwang0930.mytg.userexam.service.UserExamService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,92 +11,85 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
+@RequestMapping("/us-ex")
 @RequiredArgsConstructor
-@RequestMapping("/board")
-public class BoardController {
-    private final BoardService boardService;
+public class UserExamController {
+    private final UserExamService userExamService;
 
-    @GetMapping("/list")
-    public ResponseEntity<ResponseMessage> readBoardList(){
+    @GetMapping("/me/list")
+    public ResponseEntity<ResponseMessage> readUserExamList(){
         StatusCode statusCode = StatusCode.SUCCESS;
         ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
-        responseMessage.addData("board", boardService.readBoardList());
+        responseMessage.addData("userExam", userExamService.readUserExamList());
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
-    @GetMapping("/{idx}")
-    public ResponseEntity<ResponseMessage> readBoard(@PathVariable Long idx){
-        if(!boardService.boardIsExist(idx)){
-            StatusCode statusCode = StatusCode.BOARD_NOT_FOUND;
+    @GetMapping("/me/{userExamId}")
+    public ResponseEntity<ResponseMessage> readUserExam(@PathVariable int userExamId){
+        if(!userExamService.userExamIsExist(userExamId)){
+            StatusCode statusCode = StatusCode.USER_EXAM_NOT_FOUND;
             ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
             return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
         }
+
         StatusCode statusCode = StatusCode.SUCCESS;
         ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
-        responseMessage.addData("board", boardService.readBoard(idx));
+        responseMessage.addData("userExam", userExamService.readUserExam(userExamId));
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
     @PostMapping("/me")
-    public ResponseEntity<ResponseMessage> createBoard(@RequestBody BoardDTO boardDTO){
+    public ResponseEntity<ResponseMessage> createUserExam(@RequestBody UserExamDTO userExamDTO){
         StatusCode statusCode = StatusCode.SUCCESS;
         ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
-        boardService.createBoard(boardDTO);
+        userExamService.createUserExam(userExamDTO);
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
-    @PutMapping("/me/{idx}")
-    public ResponseEntity<ResponseMessage> updateBoard(@PathVariable Long idx, @RequestBody BoardDTO boardDTO){
+    @PutMapping("/me/{userExamId}")
+    public ResponseEntity<ResponseMessage> updateUserExam(@RequestBody UserExamDTO userExamDTO, @PathVariable int userExamId){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        if(!boardService.matchUser(username, idx)){
+        if(!userExamService.matchUser(username, userExamId)){
             StatusCode statusCode = StatusCode.USER_MATCH_FAILED;
             ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
             return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
         }
 
-        if(!boardService.boardIsExist(idx)){
-            StatusCode statusCode = StatusCode.BOARD_NOT_FOUND;
+        if(!userExamService.userExamIsExist(userExamId)){
+            StatusCode statusCode = StatusCode.USER_EXAM_NOT_FOUND;
             ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
             return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
         }
 
         StatusCode statusCode = StatusCode.SUCCESS;
         ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
-        boardService.updateBoard(idx, boardDTO);
+        userExamService.updateUserExam(userExamDTO, userExamId);
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
     }
 
-    @DeleteMapping("/me/{idx}")
-    public ResponseEntity<ResponseMessage> deleteBoard(@PathVariable Long idx){
+    @DeleteMapping("/me/{userExamId}")
+    public ResponseEntity<ResponseMessage> deleteUserExam(@PathVariable int userExamId){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        if(!boardService.matchUser(username, idx)){
+        if(!userExamService.matchUser(username, userExamId)){
             StatusCode statusCode = StatusCode.USER_MATCH_FAILED;
             ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
             return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
         }
 
-
-        if(!boardService.boardIsExist(idx)){
-            StatusCode statusCode = StatusCode.BOARD_NOT_FOUND;
+        if(!userExamService.userExamIsExist(userExamId)){
+            StatusCode statusCode = StatusCode.USER_EXAM_NOT_FOUND;
             ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
             return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
         }
 
         StatusCode statusCode = StatusCode.SUCCESS;
         ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
-        boardService.deleteBoard(idx);
+        userExamService.deleteUserExam(userExamId);
         return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
-    }
-
-    @GetMapping("/search")
-    public List<BoardDTO> searchBoard(@RequestParam String keyword){
-        return boardService.searchBoard(keyword);
     }
 }

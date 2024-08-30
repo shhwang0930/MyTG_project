@@ -24,7 +24,10 @@ public enum StatusCode {
 
     //JWT 관련 에러코드
     TOKEN_NOT_FOUND(4008,"JWT 토큰이 존재하지 않습니다."),
-    INVAILD_TOKEN(4009,"올바르지 않은 토큰입니다.");
+    INVAILD_TOKEN(4009,"올바르지 않은 토큰입니다."),
+
+    //유저 시험 정보 관련 코드
+    USER_EXAM_NOT_FOUND(4010,"유저의 등록된 시험 정보가 없습니다.");
 
     private final Integer code;
     private final String message;

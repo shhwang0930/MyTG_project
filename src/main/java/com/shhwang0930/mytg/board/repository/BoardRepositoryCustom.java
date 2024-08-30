@@ -1,7 +1,6 @@
 package com.shhwang0930.mytg.board.repository;
 
-import com.shhwang0930.mytg.board.model.BoardDTO;
-import com.shhwang0930.mytg.board.model.BoardEntity;
+import com.shhwang0930.mytg.board.model.dto.BoardDTO;
 
 import java.util.List;
 

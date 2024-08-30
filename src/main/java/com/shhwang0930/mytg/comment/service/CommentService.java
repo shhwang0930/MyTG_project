@@ -1,7 +1,7 @@
 package com.shhwang0930.mytg.comment.service;
 
 
-import com.shhwang0930.mytg.board.model.BoardEntity;
+import com.shhwang0930.mytg.board.model.entity.BoardEntity;
 import com.shhwang0930.mytg.board.repository.BoardRepository;
 import com.shhwang0930.mytg.comment.model.CommentDTO;
 import com.shhwang0930.mytg.comment.model.CommentEntity;

@@ -1,4 +1,4 @@
-package com.shhwang0930.mytg.board.model;
+package com.shhwang0930.mytg.board.model.dto;
 
 import lombok.Data;
 

@@ -67,8 +67,8 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .antMatchers("/login", "/", "/test").permitAll()
-                        .antMatchers("/admin","/board/me/**","/comment/me/**","/user/me/**").hasRole("ADMIN")
+                        .antMatchers("/login", "/", "/test","/schedule/**").permitAll()
+                        .antMatchers("/admin","/board/me/**","/comment/me/**","/user/me/**","/us-ex/me/**").hasRole("ADMIN")
                         .antMatchers("/reissue","/board/**","/comment/**","/user/**").permitAll()
                         .anyRequest().authenticated());
         //필터 추가 LoginFilter()는 인자를 받음 (AuthenticationManager() 메소드에 authenticationConfiguration 객체를 넣어야 함) 따라서 등록 필요

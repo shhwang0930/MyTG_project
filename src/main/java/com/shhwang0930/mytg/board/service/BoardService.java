@@ -1,8 +1,8 @@
 package com.shhwang0930.mytg.board.service;
 
-import com.shhwang0930.mytg.board.model.BoardDTO;
-import com.shhwang0930.mytg.board.model.BoardEntity;
-import com.shhwang0930.mytg.board.model.Category;
+import com.shhwang0930.mytg.board.model.dto.BoardDTO;
+import com.shhwang0930.mytg.board.model.entity.BoardEntity;
+import com.shhwang0930.mytg.board.model.entity.Category;
 import com.shhwang0930.mytg.board.repository.BoardRepository;
 import com.shhwang0930.mytg.user.model.entity.UserEntity;
 import com.shhwang0930.mytg.user.repository.UserRepository;

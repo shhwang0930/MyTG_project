@@ -1,4 +1,4 @@
-package com.shhwang0930.mytg.exam.model;
+package com.shhwang0930.mytg.exam.model.entity;
 
 import lombok.Builder;
 import lombok.Getter;

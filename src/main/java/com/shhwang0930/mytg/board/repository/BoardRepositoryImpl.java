@@ -3,7 +3,7 @@ package com.shhwang0930.mytg.board.repository;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.shhwang0930.mytg.board.model.BoardDTO;
+import com.shhwang0930.mytg.board.model.dto.BoardDTO;
 import com.shhwang0930.mytg.board.model.QBoardEntity;
 import lombok.RequiredArgsConstructor;
 
