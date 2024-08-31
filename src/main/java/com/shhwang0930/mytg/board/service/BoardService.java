@@ -1,5 +1,6 @@
 package com.shhwang0930.mytg.board.service;
 
+import com.shhwang0930.mytg.board.exception.BoardEntityNotFoundException;
 import com.shhwang0930.mytg.board.model.dto.BoardDTO;
 import com.shhwang0930.mytg.board.model.entity.BoardEntity;
 import com.shhwang0930.mytg.board.model.entity.Category;
@@ -27,17 +28,9 @@ public class BoardService {
     }
 
     public BoardDTO readBoard(long idx){
-        // 1. BoardEntity를 조회합니다.
-        Optional<BoardEntity> optionalBoardEntity = boardRepository.findById(idx);
-
-        // 2. 조회된 BoardEntity를 DTO로 변환합니다.
-        if (optionalBoardEntity.isPresent()) {
-            BoardEntity boardEntity = optionalBoardEntity.get();
-            return BoardDTO.fromEntity(boardEntity);
-        } else {
-            // BoardEntity가 존재하지 않는 경우 적절히 처리합니다.
-            return null;
-        }
+        BoardEntity boardEntity = boardRepository.findById(idx)
+                .orElseThrow(BoardEntityNotFoundException::new);
+        return BoardDTO.fromEntity(boardEntity);
     }
 
     @Transactional
@@ -60,32 +53,27 @@ public class BoardService {
         String username = authentication.getName();
 
         // 현재 인증된 사용자 가져오기
-        UserEntity user = userRepository.findByUsername(username);
-        if (user == null) {
+        UserEntity userEntity = userRepository.findByUsername(username);
+        if (userEntity == null) {
             throw new RuntimeException("User not found");
         }
 
         // 기존 게시물 조회
-        Optional<BoardEntity> optionalBoard = boardRepository.findById(idx);
-        if (optionalBoard.isEmpty()) {
-            throw new RuntimeException("Board not found");
-        }
-
-        // 기존 게시물 가져오기
-        BoardEntity existingBoard = optionalBoard.get();
+        BoardEntity boardEntity = boardRepository.findById(idx)
+                .orElseThrow(BoardEntityNotFoundException::new);
 
         // 게시물의 작성자와 현재 인증된 사용자가 일치하는지 확인
-        if (!existingBoard.getUser().equals(user)) {
+        if (!boardEntity.getUser().equals(userEntity)) {
             throw new RuntimeException("Unauthorized to update this board");
         }
 
         // 새로운 상태를 가진 BoardEntity를 생성
         BoardEntity updatedBoard = BoardEntity.builder()
-                .idx(existingBoard.getIdx()) // 기존 ID 유지
+                .idx(boardEntity.getIdx()) // 기존 ID 유지
                 .title(boardDTO.getTitle())
                 .content(boardDTO.getContent())
                 .category(Category.valueOf(boardDTO.getCategory()))
-                .user(user) // 현재 사용자로 설정
+                .user(userEntity) // 현재 사용자로 설정
                 .build();
 
         // 새로운 엔티티로 저장

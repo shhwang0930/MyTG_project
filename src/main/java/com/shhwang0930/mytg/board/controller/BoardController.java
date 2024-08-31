@@ -54,12 +54,6 @@ public class BoardController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        if(!boardService.matchUser(username, idx)){
-            StatusCode statusCode = StatusCode.USER_MATCH_FAILED;
-            ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
-            return ResponseEntity.status(HttpStatus.OK).body(responseMessage);
-        }
-
         if(!boardService.boardIsExist(idx)){
             StatusCode statusCode = StatusCode.BOARD_NOT_FOUND;
             ResponseMessage responseMessage = new ResponseMessage(statusCode.getCode(), statusCode.getMessage(), null);
