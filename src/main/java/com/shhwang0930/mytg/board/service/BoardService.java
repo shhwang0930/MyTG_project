@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,8 +33,7 @@ public class BoardService {
     }
 
     @Transactional
-    public void createBoard(BoardDTO boardDTO){
-
+    public BoardDTO createBoard(BoardDTO boardDTO){
         // 현재 인증된 사용자 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -43,20 +41,18 @@ public class BoardService {
         UserEntity user = userRepository.findByUsername(username);
 
         BoardEntity board = boardDTO.toEntity(user);
-        boardRepository.save(board);
+
+        return BoardDTO.fromEntity(boardRepository.save(board));
     }
 
     @Transactional
-    public void updateBoard(Long idx, BoardDTO boardDTO){
+    public BoardDTO updateBoard(Long idx, BoardDTO boardDTO){
         // 현재 인증된 사용자 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
         // 현재 인증된 사용자 가져오기
         UserEntity userEntity = userRepository.findByUsername(username);
-        if (userEntity == null) {
-            throw new RuntimeException("User not found");
-        }
 
         // 기존 게시물 조회
         BoardEntity boardEntity = boardRepository.findById(idx)
@@ -77,11 +73,27 @@ public class BoardService {
                 .build();
 
         // 새로운 엔티티로 저장
-        boardRepository.save(updatedBoard);
+        return BoardDTO.fromEntity(boardRepository.save(updatedBoard));
     }
 
     @Transactional
     public void deleteBoard(long idx){
+        // 현재 인증된 사용자 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        // 현재 인증된 사용자 가져오기
+        UserEntity userEntity = userRepository.findByUsername(username);
+
+        // 기존 게시물 조회
+        BoardEntity boardEntity = boardRepository.findById(idx)
+                .orElseThrow(BoardEntityNotFoundException::new);
+
+        // 게시물의 작성자와 현재 인증된 사용자가 일치하는지 확인
+        if (!boardEntity.getUser().equals(userEntity)) {
+            throw new RuntimeException("Unauthorized to update this board");
+        }
+
         boardRepository.deleteByIdx(idx);
     }
 

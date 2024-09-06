@@ -67,6 +67,7 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
+                        .antMatchers("/h2-console/**").permitAll()
                         .antMatchers("/login", "/", "/exam/**").permitAll()
                         .antMatchers("/admin","/board/me/**","/comment/me/**","/user/me/**","/us-ex/me/**").hasRole("ADMIN")
                         .antMatchers("/reissue","/board/**","/comment/**","/user/**").permitAll()

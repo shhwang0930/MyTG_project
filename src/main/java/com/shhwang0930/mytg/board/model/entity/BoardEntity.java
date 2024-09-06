@@ -1,6 +1,5 @@
 package com.shhwang0930.mytg.board.model.entity;
 
-import com.shhwang0930.mytg.board.model.entity.Category;
 import com.shhwang0930.mytg.comment.model.CommentEntity;
 import com.shhwang0930.mytg.user.model.entity.UserEntity;
 import lombok.Builder;
