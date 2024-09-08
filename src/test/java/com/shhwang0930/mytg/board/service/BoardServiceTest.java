@@ -87,7 +87,7 @@ public class BoardServiceTest {
 
     @Test
     @DisplayName("게시글 생성")
-    void createBoard() throws Exception{
+    void createBoard(){
         // given
 
         board = BoardDTO.builder()

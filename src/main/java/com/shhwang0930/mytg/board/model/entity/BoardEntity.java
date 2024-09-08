@@ -31,8 +31,8 @@ public class BoardEntity {
     @JoinColumn(name = "id")
     private UserEntity user;
 
-    @OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
-    private List<CommentEntity> commentList;
+    //@OneToMany(mappedBy = "board", cascade = CascadeType.REMOVE)
+    //private List<CommentEntity> commentList;
 
     @Builder
     public BoardEntity(Long idx, String title, String content, Category category, UserEntity user) {

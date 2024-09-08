@@ -157,7 +157,6 @@ public class BoardRepositoryTest {
         BoardEntity board1 =
                 BoardEntity
                         .builder()
-                        .idx(1L) // idx 지정을 해줘야 함
                         .title("title 1")
                         .content("content 1")
                         .user(user1)
@@ -168,7 +167,7 @@ public class BoardRepositoryTest {
         boardRepository.save(board1);
 
         //when
-        Boolean result = boardRepository.existsByIdx(1L);
+        Boolean result = boardRepository.existsByIdx(board1.getIdx());
 
         //then
         Assertions.assertThat(result).isEqualTo(true);

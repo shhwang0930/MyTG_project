@@ -39,7 +39,7 @@ public class CommentService {
         return CommentDTO.fromEntity(commentEntity);
     }
 
-    public void createComment(CommentDTO commentDTO, Long idx){
+    public CommentDTO createComment(CommentDTO commentDTO, Long idx){
         // 현재 인증된 사용자 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -49,10 +49,10 @@ public class CommentService {
 
         CommentEntity comment = commentDTO.toEntity(board, user);
 
-        commentRepository.save(comment);
+        return CommentDTO.fromEntity(commentRepository.save(comment));
     }
 
-    public void updateComment(CommentDTO commentDTO, Long commentIdx, Long idx){
+    public CommentDTO updateComment(CommentDTO commentDTO, Long commentIdx, Long idx){
         // 현재 인증된 사용자 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
@@ -72,7 +72,7 @@ public class CommentService {
 
         // 게시물의 작성자와 현재 인증된 사용자가 일치하는지 확인
         if (!commentEntity.getUser().equals(user)) {
-            throw new RuntimeException("Unauthorized to update this board");
+            throw new RuntimeException("Unauthorized to update this comment");
         }
 
         // 새로운 상태를 가진 BoardEntity를 생성
@@ -85,10 +85,28 @@ public class CommentService {
 
 
         // 새로운 엔티티로 저장
-        commentRepository.save(updatedComment);
+        return CommentDTO.fromEntity(commentRepository.save(updatedComment));
     }
 
     public void deleteComment(Long commentIdx){
+        // 현재 인증된 사용자 가져오기
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        // 기존 게시물 조회
+        CommentEntity commentEntity = commentRepository.findById(commentIdx)
+                .orElseThrow(CommentEntityNotFoundException::new);
+
+        // 현재 인증된 사용자 가져오기
+        UserEntity user = userRepository.findByUsername(username);
+        if (user == null) {
+            throw new RuntimeException("User not found");
+        }
+
+        // 게시물의 작성자와 현재 인증된 사용자가 일치하는지 확인
+        if (!commentEntity.getUser().equals(user)) {
+            throw new RuntimeException("Unauthorized to update this comment");
+        }
         commentRepository.deleteByCommentIdx(commentIdx);
     }
 
@@ -97,7 +115,7 @@ public class CommentService {
     }
 
     public boolean matchBoardComment(Long idx, Long commentIdx){
-        CommentEntity comment = commentRepository.findAllByCommentIdx(commentIdx);
+        CommentEntity comment = commentRepository.findByCommentIdx(commentIdx);
         Long boardIdx = comment.getBoard().getIdx();
         if(idx == boardIdx){
             return true;
@@ -106,7 +124,7 @@ public class CommentService {
     }
 
     public boolean matchUser(String username, Long commentIdx){
-        if(userRepository.findByUsername(username).getId()==commentRepository.findAllByCommentIdx(commentIdx).getUser().getId()){
+        if(userRepository.findByUsername(username).getId()==commentRepository.findByCommentIdx(commentIdx).getUser().getId()){
             return true;
         }
         return false;

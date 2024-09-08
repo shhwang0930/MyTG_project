@@ -1,9 +1,12 @@
 package com.shhwang0930.mytg.userexam.service;
 
+import com.shhwang0930.mytg.board.exception.BoardEntityNotFoundException;
+import com.shhwang0930.mytg.board.model.entity.BoardEntity;
 import com.shhwang0930.mytg.exam.model.entity.ExamEntity;
 import com.shhwang0930.mytg.exam.repository.ExamRepository;
 import com.shhwang0930.mytg.user.model.entity.UserEntity;
 import com.shhwang0930.mytg.user.repository.UserRepository;
+import com.shhwang0930.mytg.userexam.exception.UserExamEntityNotFoundException;
 import com.shhwang0930.mytg.userexam.model.UserExamDTO;
 import com.shhwang0930.mytg.userexam.model.UserExamEntity;
 import com.shhwang0930.mytg.userexam.repository.UserExamRepository;
@@ -41,7 +44,9 @@ public class UserExamService {
         UserExamEntity userExam = userExamRepository.findByUserExamId(userExamId);
         return UserExamDTO.fromEntity(userExam);
     }
-    public void createUserExam(UserExamDTO userExamDTO){
+
+    @Transactional
+    public UserExamDTO createUserExam(UserExamDTO userExamDTO){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
@@ -49,23 +54,26 @@ public class UserExamService {
         ExamEntity exam = examRepository.findByJmcd(userExamDTO.getJmcd());
         UserExamEntity userExam = userExamDTO.toEntity(user, exam);
 
-        userExamRepository.save(userExam);
+        return UserExamDTO.fromEntity(userExamRepository.save(userExam));
     }
 
     @Transactional
-    public void updateUserExam(UserExamDTO userExamDTO, int userExamId){
+    public UserExamDTO updateUserExam(UserExamDTO userExamDTO, int userExamId){
         // 현재 인증된 사용자 가져오기
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
         // 현재 인증된 사용자 가져오기
         UserEntity user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new RuntimeException("User not found");
-        }
 
-        // 기존 유저시험 조회
-        UserExamEntity userExam = userExamRepository.findByUserExamId(userExamId);
+        // 기존 게시물 조회
+        UserExamEntity userExam = userExamRepository.findById(userExamId)
+                .orElseThrow(UserExamEntityNotFoundException::new);
+
+        // 게시물의 작성자와 현재 인증된 사용자가 일치하는지 확인
+        if (!userExam.getUser().equals(user)) {
+            throw new RuntimeException("Unauthorized to update this userExam");
+        }
 
         // 새로운 상태를 가진 UserExamEntity 생성
         UserExamEntity updatedUserExam = UserExamEntity.builder()
@@ -76,7 +84,7 @@ public class UserExamService {
                 .build();
 
         // 새로운 엔티티로 저장
-        userExamRepository.save(updatedUserExam);
+        return UserExamDTO.fromEntity(userExamRepository.save(updatedUserExam));
     }
 
     @Transactional
@@ -87,8 +95,14 @@ public class UserExamService {
 
         // 현재 인증된 사용자 가져오기
         UserEntity user = userRepository.findByUsername(username);
-        if (user == null) {
-            throw new RuntimeException("User not found");
+
+        // 기존 게시물 조회
+        UserExamEntity userExam = userExamRepository.findById(userExamId)
+                .orElseThrow(UserExamEntityNotFoundException::new);
+
+        // 게시물의 작성자와 현재 인증된 사용자가 일치하는지 확인
+        if (!userExam.getUser().equals(user)) {
+            throw new RuntimeException("Unauthorized to update this userExam");
         }
         userExamRepository.deleteByUserExamId(userExamId);
     }

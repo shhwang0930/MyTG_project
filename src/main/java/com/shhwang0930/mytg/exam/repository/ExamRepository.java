@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface ExamRepository extends JpaRepository<ExamEntity,Integer> {
     boolean existsBySeriesnm(String seriesnm);
 
-    ExamEntity findBySeriesnm(String jmfldnm);
+    ExamEntity findByJmfldnm(String jmfldnm);
 
     ExamEntity findByJmcd(int jmcd);
 }

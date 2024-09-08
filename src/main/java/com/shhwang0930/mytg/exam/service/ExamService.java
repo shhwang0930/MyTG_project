@@ -146,12 +146,12 @@ public class ExamService {
         return dateList;
     }
 
-    public int getExamJmcd(String seriesnm){
-        ExamEntity examEntity = examRepository.findBySeriesnm(seriesnm);
+    public int getExamJmcd(String jmfldnm){
+        ExamEntity examEntity = examRepository.findByJmfldnm(jmfldnm);
         if (examEntity != null) {
             return examEntity.getJmcd();
         } else {
-            throw new RuntimeException("No ExamEntity found with jmfldnm: " + seriesnm);
+            throw new RuntimeException("No ExamEntity found with jmfldnm: " + jmfldnm);
         }
     }
 

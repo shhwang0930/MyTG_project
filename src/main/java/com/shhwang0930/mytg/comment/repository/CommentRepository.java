@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface CommentRepository extends JpaRepository<CommentEntity, Long> {
     List<CommentEntity> findAllByBoardIdx(Long idx);
-    CommentEntity findAllByCommentIdx(Long idx);
+    CommentEntity findByCommentIdx(Long idx);
     void deleteByCommentIdx(Long idx);
     boolean existsByCommentIdx(Long commentIdx);
 }
