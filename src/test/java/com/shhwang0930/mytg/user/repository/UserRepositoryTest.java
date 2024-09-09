@@ -1,8 +1,6 @@
 package com.shhwang0930.mytg.user.repository;
 
 import com.shhwang0930.mytg.config.TestConfig;
-import com.shhwang0930.mytg.exam.model.entity.ExamEntity;
-import com.shhwang0930.mytg.exam.repository.ExamRepository;
 import com.shhwang0930.mytg.user.model.entity.UserEntity;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;

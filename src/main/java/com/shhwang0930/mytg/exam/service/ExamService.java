@@ -155,7 +155,7 @@ public class ExamService {
         }
     }
 
-    private Boolean filterDate(String date) throws Exception {
+    public Boolean filterDate(String date) throws Exception {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
         Date currentDate = new Date();
 
